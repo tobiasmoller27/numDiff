@@ -3,21 +3,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg as linalg
 
-"""
+
 #TASK 1.2 
 N = 100
 [tgrid, approx, err] = lok.eulerint(np.matrix('-1 10; 0 -3'), np.matrix('1;1'), 0, 1, N)
+#[tgrid, approx,err] = lok.eulerint(np.matrix('3'),np.matrix('1'),0,1,20)
 print("Error: " + str(err))
-
-
-realY = np.exp(2*tgrid)
+print(len(tgrid))
+realY = [0]*tgrid
+for i in range(len(tgrid)):
+    A = linalg.expm(tgrid[i]*np.matrix('-1 10; 0 -3'))*np.matrix('1;1')
+    realY[i] = A[0][0]
 plt.title("Task 1.2")
 #plt.plot(tgrid, approx, label = "Approximation")
-#plt.plot(tgrid, realY, label = "Real function")
-plt.plot(tgrid, err)
+plt.plot(tgrid, realY, label = "Real function")
+plt.plot(tgrid, err, label = "Error")
+plt.plot(tgrid, approx[0][:], label = "Approximation")
 plt.legend()
 plt.show()
-"""
+
 
 """
 #TASK 1.3
@@ -131,7 +135,7 @@ plt.loglog(h1, e1, label ="A = 1")
 plt.legend()
 plt.show()
 """
-
+"""
 N = 100
 [tgrid, approx, err] = lok.eulerint(np.matrix('3'), np.matrix('1'), 0, 1, N)
 print("tgrid: " + str(tgrid))
@@ -153,3 +157,4 @@ plt.plot(tgrid, realY)
 
 plt.legend()
 plt.show()
+"""
