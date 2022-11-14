@@ -29,7 +29,6 @@ def RK4walk(f,t0,y0,tf,N):
         [unew,l]=RK4step(f,told,uold,h)
         uold = unew
         
-
     return [tgrid, approx, localErr]
 
 
@@ -69,3 +68,33 @@ def adaptiveRK34(f, t0, tf, y0, tol):
     t[-1] = tf
     
     return [t, y]
+
+
+def adaptiveRK34m(f, t0, tf, y0, tol):
+    h = (abs(tf-t0)*tol**(1/4))/(100*(1+linalg.norm(f(t0,y0))))
+    k = 4
+    errold = tol
+    uold = y0
+    unew = y0
+    tc = t0
+    t = []
+    y = y0
+
+    while(tc <= tf):
+        t.append(tc)
+        #y.append(unew)
+        if (tc != t0):
+            y = np.c_[y, unew]
+        [unew, err] = RK34step(f, tc, uold, h)
+        #if err > tol:
+        h = newstep(tol, err, errold, h, k)
+        errold = err
+        uold = unew
+        tc += h
+    
+    hDiff = tf-t[-2]
+    [yf, err] = RK34step(f, t[-2], y[:,-2], hDiff)
+    y[:,-1] = yf
+    t[-1] = tf
+    return [t, y]
+
