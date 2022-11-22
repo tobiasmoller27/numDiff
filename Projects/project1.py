@@ -6,12 +6,12 @@ import scipy.linalg as linalg
 import scipy.integrate as scint
 
 
-
+"""
 # Test of RK4walk
 def p(told, uold):
     #return np.matrix('3 9;15 15')*uold
     return 3*uold
-
+"""
 """
 [tgrid, approx, localErr] = lok.RK4walk(p,0,1,1,10)
 realY = np.exp(3*tgrid)
@@ -73,7 +73,7 @@ plt.legend()
 plt.show()
 
 """
-
+"""
 # Task 2.1
 
 def lotka(t, u):
@@ -91,9 +91,9 @@ def H(x,y):
 
 
 t0 = 0
-tf = 10
+tf = 100
 tol = 10**(-6)
-y0 = np.matrix('1; 1')
+y0 = np.matrix('60; 70')
 [t,y] = lok.adaptiveRK34m(lotka, t0, tf, y0, tol)
 HCompare = abs(H(y[0,:], y[1,:])/H(y0[0],y0[1])-1)
 yClean = []
@@ -110,24 +110,24 @@ plt.plot(t,yClean2, label="Fox")
 plt.legend()
 plt.show()
 
-"""
+
 # Plot H
-plt.semilogy(t,hPlottable)
-plt.show()
+#plt.semilogy(t,hPlottable)
+#plt.show()
 """
 """
 # TASK 3.1
 def vdP(t,u):
     r = np.zeros((2,1))
     r[0] = u[1]
-    r[1] = 100*(1-u[0]**2)*u[1]-u[0]
+    r[1] = 200*(1-u[0]**2)*u[1]-u[0]
     return r
 
     
 t0 = 0
-tf = 200
-tol = 10**(-4)
-y0 = np.matrix('2; 0')
+tf = 400
+tol = 10**(-6)
+y0 = np.matrix('3; 0')
 [t,y] = lok.adaptiveRK34m(vdP, t0, tf, y0, tol)
 yClean = []
 yClean2 = []
@@ -141,17 +141,14 @@ plt.plot(yClean,yClean2)
 plt.legend()
 plt.show()
 """
-"""
+
 # Task 3.2
 
 
-#mus = [10,15,22,33,47,68,100,150]
-#mus = [10,15,22,33,47,68,100,150,220,330,470,680,1000]
-mus = [1000]
+"""
+mus = [10,15,22,33,47,68,100,150,220,330,470,680]
 stepsMu = []
-for i in range(len(mus)):
-    mu = mus[i]
-
+for mu in mus:
     def vdPwithMu(t,u):
         r = np.zeros((2,1))
         r[0] = u[1]
@@ -162,19 +159,15 @@ for i in range(len(mus)):
     tf = 0.7*mu
     tol = 10**(-7)
     y0 = np.matrix('2; 0')
-
     [t,y] = lok.adaptiveRK34m(vdPwithMu, t0, tf, y0, tol)
-    print(len(t))
     stepsMu.append(len(t))
-    
+    print(len(t))
 
-
-plt.title("Steps per mu")
-plt.loglog(mus,stepsMu)
-
+plt.title("Steps per mu^2")
+plt.loglog(np.square(mus),stepsMu)
 plt.show()
 """
-"""
+
 # Task 3.3
 
 def vdP(t,u):
@@ -185,11 +178,11 @@ def vdP(t,u):
 
     
 t0 = 0
-tf = 200
-tol = 10**(-4)
+
+tol = 10**(-6)
 y0 = [2,0]
-resultIVP= scint.solve_ivp(vdP, (t0,tf), y0, method="BDF")
-"""
+#resultIVP= scint.solve_ivp(vdP, (t0,tf), y0, method="BDF")
+
 """
 print(resultIVP.t)
 print(resultIVP.y)
@@ -198,11 +191,12 @@ plt.plot(resultIVP.t, resultIVP.y[1,:])
 plt.show()
 """
 
-"""
-mus = [10,15,22,33,47,68,100,150,220,330,470,680,1000,10000]
+
+mus = [10,15,22,33,47,68,100,150,220,330,470,680,1000]
 nSteps = []
 for mu in mus:
-    tf=2*mu
+    tf=0.7*mu
+    
     def vdPwithMu(t,u):
         r = [0,0]
         r[0] = u[1]
@@ -211,6 +205,7 @@ for mu in mus:
     resultIVP= scint.solve_ivp(vdPwithMu, (t0,tf), y0, method="BDF")
     nSteps.append(len(resultIVP.t))
     print("Mu: " +str(mu) + "   Nr of steps: " +str(len(resultIVP.t)))
-plt.plot(mus,nSteps)
+plt.loglog(mus,nSteps)
 plt.show()
-"""
+
+

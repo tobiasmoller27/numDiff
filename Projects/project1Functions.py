@@ -86,8 +86,9 @@ def adaptiveRK34m(f, t0, tf, y0, tol):
         if (tc != t0):
             y = np.c_[y, unew]
         [unew, err] = RK34step(f, tc, uold, h)
-        #if err > tol:
-        h = newstep(tol, err, errold, h, k)
+        #while err > tol:
+        h = newstep(tol, abs(err), abs(errold), h, k)
+            #[unew, err] = RK34step(f, tc, uold, h)
         errold = err
         uold = unew
         tc += h
