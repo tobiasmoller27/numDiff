@@ -1,24 +1,36 @@
 import numpy as np
 import scipy.linalg as lin
-L = 1
-N = 499
-Dx = L/(N+1)
-def p(x, lmbd):
-    return lmbd*x
-TDx =  (np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1))/(Dx**2)
-print(TDx)
-lambdas, eigvectors = lin.eigh(TDx)
-#idx = np.argsort(lambdas)
-#lambdas = lambdas[idx]
-#eigvectors = eigvectors[:, idx]
+import matplotlib.pyplot as plt
+import math
 
-print(lambdas[-1])
-print(lambdas[-2])
-print(lambdas[-3])
+NStart = 5
+bigN = 101
+NLambda = np.zeros((bigN-NStart,3))
+
+NList = np.arange(NStart, bigN)
+#NList = NList.reshape((bigN-NStart,1))
 
 
-"""
-z
-xInterior = np.linspace(0+Dx, L-Dx, N)
-M = lok.twopBVP(q,0,0,L,N)
-x = np.linspace(0, L, N+2)"""
+for N in NList:
+    L = 1
+    Dx = L/(N)
+    TDx =  (np.diag(np.full(N+1,-2))+np.diag(np.ones(N),1)+np.diag(np.ones(N),-1))/(Dx**2)
+    TDx[N][N] = -1/(Dx**2)
+    TDx[N][N-1] = 1/(Dx**2)
+    lambdas, eigvectors = lin.eigh(TDx)
+
+    NLambda[N-NStart][0] = lambdas[-1] + math.pi**2/4
+    NLambda[N-NStart][1] = lambdas[-2] + (3*math.pi/2)**2
+    NLambda[N-NStart][2] = lambdas[-3] + (5*math.pi/2)**2
+
+NLambda1 = [row[0] for row in NLambda]
+NLambda2 = [row[1] for row in NLambda]
+NLambda3 = [row[2] for row in NLambda]
+
+plt.loglog(NList, NLambda1,  label = "Lambda1")
+plt.loglog(NList, NLambda2, label = "Lambda2")
+plt.loglog(NList, NLambda3, label = "Lambda3")
+plt.loglog(NList, 1/NList, label = "Referens")
+plt.grid(True)
+plt.legend()
+plt.show()
