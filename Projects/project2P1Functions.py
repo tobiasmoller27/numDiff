@@ -17,3 +17,10 @@ def twopBVP(fvec, alpha, beta, L, N):
     Y = np.matmul(lin.inv(T),HL)*((Dx)**2)
     Y = np.vstack([[alpha],Y, [beta]])
     return Y
+
+def statSchrodSolve(V, L, N):
+    Dx = L/(N+1)
+    xgrid = np.linspace(0,1,N)
+    vvec = V(xgrid)
+    T = np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1)
+    Y = np.matmul(lin.inv(T),HL)*((Dx)**2)

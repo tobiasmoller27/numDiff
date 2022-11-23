@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 
 NStart = 5
-bigN = 101
+bigN = 499
 NLambda = np.zeros((bigN-NStart,3))
 
 NList = np.arange(NStart, bigN)
@@ -19,9 +19,11 @@ for N in NList:
     TDx[N][N-1] = 1/(Dx**2)
     lambdas, eigvectors = lin.eigh(TDx)
 
+
     NLambda[N-NStart][0] = lambdas[-1] + math.pi**2/4
     NLambda[N-NStart][1] = lambdas[-2] + (3*math.pi/2)**2
     NLambda[N-NStart][2] = lambdas[-3] + (5*math.pi/2)**2
+    eigvectorTest = eigvectors[-3]
 
 NLambda1 = [row[0] for row in NLambda]
 NLambda2 = [row[1] for row in NLambda]
@@ -34,3 +36,9 @@ plt.loglog(NList, 1/NList, label = "Referens")
 plt.grid(True)
 plt.legend()
 plt.show()
+"""
+plt.plot(np.linspace(0,1, 499),eigvectorTest, 'b+')
+plt.plot(np.linspace(0,1, 499),np.max(eigvectorTest)*np.sin(np.linspace(0,1, 499)*5*(math.pi/2)), 'r')
+
+plt.show()
+"""
