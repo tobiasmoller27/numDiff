@@ -20,7 +20,12 @@ def twopBVP(fvec, alpha, beta, L, N):
 
 def statSchrodSolve(V, L, N):
     Dx = L/(N+1)
-    xgrid = np.linspace(0,1,N)
+    xgrid = np.linspace(0,L,N)
     vvec = V(xgrid)
-    T = np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1)
-    Y = np.matmul(lin.inv(T),HL)*((Dx)**2)
+    print(vvec)
+    T = np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1)/(Dx**2)
+    # Add Dx^2*V to the diagonal 
+    T = T + np.diagflat(vvec*Dx**2)
+    print(T)
+    eg, egf = lin.eigh(T)
+    return Dx, eg, egf, xgrid

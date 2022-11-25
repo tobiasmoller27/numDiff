@@ -3,7 +3,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-"""
+
 # TASK 1.1
 N = 100
 L = 2
@@ -16,10 +16,14 @@ f = p(x)
 
 y = lok.twopBVP(f, 1, math.e**4, L, N)
 x = np.linspace(0, L, N+2)
-plt.plot(x,y)
-plt.show()
-"""
 
+yReal = np.exp(np.square(x))
+err = yReal - y
+#plt.plot(x,y)
+plt.loglog(x, err)
+plt.show()
+
+"""
 # Task 1.2
 
 #Start by calculating M
@@ -30,10 +34,11 @@ Dx = L/(N+1)
 xInterior = np.linspace(0+Dx, L-Dx, N)
 M = lok.twopBVP(q,0,0,L,N)
 x = np.linspace(0, L, N+2)
+"""
 """plt.title("M(x)")
 plt.plot(x,M)
 plt.show()"""
-
+"""
 #Calculating u
 I = 0.001*(3-2*(np.cos(math.pi*xInterior/L))**12)
 E = 1.9 * 10**11
@@ -44,3 +49,4 @@ print("u midpoint: "+str(u[501]))
 plt.title("u(x)")
 plt.plot(x,u)
 plt.show()
+"""

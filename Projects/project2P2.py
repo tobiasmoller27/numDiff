@@ -1,8 +1,10 @@
 import numpy as np
 import scipy.linalg as lin
+import scipy.integrate as intg
 import matplotlib.pyplot as plt
 import math
-
+import project2P1Functions as lok
+"""
 NStart = 5
 bigN = 499
 NLambda = np.zeros((bigN-NStart,3))
@@ -37,8 +39,29 @@ plt.grid(True)
 plt.legend()
 plt.show()
 """
+"""
 plt.plot(np.linspace(0,1, 499),eigvectorTest, 'b+')
 plt.plot(np.linspace(0,1, 499),np.max(eigvectorTest)*np.sin(np.linspace(0,1, 499)*5*(math.pi/2)), 'r')
 
 plt.show()
 """
+
+def V(x):
+    return 80000*x
+
+N = 100
+Dx, eg, egf, xgrid = lok.statSchrodSolve(V, 1, N)
+
+
+plt.plot(xgrid, egf[-3],"+")
+plt.show()
+
+# Norm
+for i in range(-4,0):
+    egfunc = [x**2 for x in (egf[i][:])]
+    egint = intg.cumtrapz(egfunc, xgrid, initial=0)
+    norm = 1/egint[-1]
+    normegfunc = [x*norm for x in egfunc]
+    plt.plot(xgrid, normegfunc)
+plt.show()
+
