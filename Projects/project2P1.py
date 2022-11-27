@@ -17,11 +17,31 @@ f = p(x)
 y = lok.twopBVP(f, 1, math.e**4, L, N)
 x = np.linspace(0, L, N+2)
 
-yReal = np.exp(np.square(x))
-err = yReal - y
+
+
+
+
 #plt.plot(x,y)
-plt.loglog(x, err)
+#plt.loglog(x, err)
+#plt.show()
+Dxs = np.zeros(400-10)
+rms = np.zeros(400-10)
+
+for N in range(10, 400):
+    Dx = L/(N+1)
+    Dxs[N-10] = Dx
+    x = np.linspace(0+Dx,L-Dx,N)
+    y = lok.twopBVP(p(x), 1, math.e**4, L, N)
+    x = np.linspace(0, L, N+2)
+    yReal = np.exp(np.square(x))
+    err = np.zeros(len(y))
+    for i in range(len(y)):
+        err[i]=(abs(yReal[i] - y[i])**2*Dx)
+    rms[N-10] = math.sqrt(np.sum(err))
+plt.grid()
+plt.loglog(Dxs, rms)
 plt.show()
+    
 
 """
 # Task 1.2

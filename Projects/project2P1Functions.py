@@ -25,7 +25,7 @@ def statSchrodSolve(V, L, N):
     print(vvec)
     T = np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1)/(Dx**2)
     # Add Dx^2*V to the diagonal 
-    T = T + np.diagflat(vvec*Dx**2)
+    T = T + np.diagflat(vvec)
     print(T)
     eg, egf = lin.eigh(T)
     return Dx, eg, egf, xgrid

@@ -47,21 +47,21 @@ plt.show()
 """
 
 def V(x):
-    return 80000*x
+    return 0
 
 N = 100
 Dx, eg, egf, xgrid = lok.statSchrodSolve(V, 1, N)
 
 
-plt.plot(xgrid, egf[-3],"+")
+plt.plot(xgrid, egf[-1])
 plt.show()
 
 # Norm
-for i in range(-4,0):
+for i in range(-1, 0):
     egfunc = [x**2 for x in (egf[i][:])]
     egint = intg.cumtrapz(egfunc, xgrid, initial=0)
     norm = 1/egint[-1]
-    normegfunc = [x*norm for x in egfunc]
+    normegfunc = [norm*x for x in egfunc]
     plt.plot(xgrid, normegfunc)
 plt.show()
 
