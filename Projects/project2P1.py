@@ -2,7 +2,7 @@ import project2P1Functions as lok
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-
+"""
 
 # TASK 1.1
 N = 100
@@ -38,27 +38,33 @@ for N in range(10, 400):
     for i in range(len(y)):
         err[i]=(abs(yReal[i] - y[i])**2*Dx)
     rms[N-10] = math.sqrt(np.sum(err))
-plt.grid()
-plt.loglog(Dxs, rms)
-plt.show()
-    
 
+plt.title("RMS of Local Error per Dx")
+plt.xlabel("Dx")
+plt.ylabel("RMS of Local Error")
+plt.grid()
+plt.loglog(Dxs, Dxs**2, label="Reference")
+plt.loglog(Dxs, rms, label = "Error")
+plt.legend()
+plt.show()
 """
+
+
 # Task 1.2
 
 #Start by calculating M
 L = 10
 N = 999
-q = (-50)*np.ones((N,1))
+q = (-50000)*np.ones((N,1))
 Dx = L/(N+1)
 xInterior = np.linspace(0+Dx, L-Dx, N)
 M = lok.twopBVP(q,0,0,L,N)
 x = np.linspace(0, L, N+2)
-"""
+
 """plt.title("M(x)")
 plt.plot(x,M)
 plt.show()"""
-"""
+
 #Calculating u
 I = 0.001*(3-2*(np.cos(math.pi*xInterior/L))**12)
 E = 1.9 * 10**11
@@ -66,7 +72,8 @@ MInterior = M[1:N+1].reshape((N,))
 u2 = MInterior/(E*I)
 u = lok.twopBVP(u2, 0, 0, L, N)
 print("u midpoint: "+str(u[501]))
-plt.title("u(x)")
+plt.title("Solution of the Beam Equation")
+plt.ylabel("u(x)")
+plt.xlabel("x")
 plt.plot(x,u)
 plt.show()
-"""

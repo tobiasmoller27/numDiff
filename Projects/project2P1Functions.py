@@ -22,10 +22,17 @@ def statSchrodSolve(V, L, N):
     Dx = L/(N+1)
     xgrid = np.linspace(0,L,N)
     vvec = V(xgrid)
-    print(vvec)
-    T = np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1)/(Dx**2)
+
+    T = (np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1))/(Dx**2)
     # Add Dx^2*V to the diagonal 
     T = T + np.diagflat(vvec)
-    print(T)
-    eg, egf = lin.eigh(T)
-    return Dx, eg, egf, xgrid
+    eg, egfRow = lin.eig(T)
+    egf = [[] for _ in range(len(T))]
+    for i in range(len(T)):
+        for v in egfRow:
+            egf[i].append(v[i])
+    eg = list(eg)
+    egf = list(egf)
+    sorted_egf = [x for _, x in sorted(zip(eg, egf))]
+    sorted_eg = sorted(eg)
+    return Dx, sorted_eg, sorted_egf, xgrid
