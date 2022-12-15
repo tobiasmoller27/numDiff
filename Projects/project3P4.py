@@ -5,15 +5,15 @@ import project3Functions as lok
 from mpl_toolkits.mplot3d import Axes3D
 
 def g(x):
-    return np.exp(-100*(x-0.5)**2)
+    return 10**0.5 * np.exp(-150 * np.power((x - 0.5), 2))
     #return x
     #return np.exp(x)
     
 tstart = 0 
 tend = 1
-N = 300
+N = 250
 M = 1000
-d = 0.005
+d = 0.01
 
 y, x, t = lok.LWInt(g, d, tstart, tend, M, N)
 

@@ -15,7 +15,7 @@ def g(x):
     #return x
     #return (np.cos(math.pi*x)**2)
 
-tstart, tend, M, N = 0, 1, 200, 11 
+tstart, tend, M, N = 0, 1, 500, 11
 y, x, t = lok.eulerint(g,tstart,tend,M,N)
 
 fig = plt.figure()

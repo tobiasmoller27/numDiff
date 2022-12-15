@@ -1,5 +1,9 @@
 import numpy as np
 import scipy.linalg as lin
+import math
+import matplotlib.pyplot as plt
+import project3Functions as lok
+from scipy.sparse import diags
 
 
 def eulerstep(Tdx, uold, dt):
@@ -35,7 +39,7 @@ def eulerint(g, tstart, tend, M, N):
         uold = unew
 
     solution = np.vstack((np.zeros((1,M+1)),solution,np.zeros((1,M+1))))
-   
+    print(dt/(dx**2))
     return solution, X, T
     
 def TRstep(Tdx, uold, dt):
@@ -57,17 +61,18 @@ def LaxWen(u, amu):
     
     S[N-1,0] = C
     S[0,N-1] = B
+
     
     unew = np.matmul(S,u)
 
     return unew
 
 def LaxWenInt(g, a, tstart, tend, M, N):
-    dx =1/N
-    xx = np.linspace(0, 1, N+1)
-    xInterior = xx[:-1]
+    dx =1/(N+1)
+    xx = np.linspace(0, 1, N)
+    xInterior = xx
 
-    dt = (tend-tstart)/M
+    dt = tend/(M+1)
     tt = np.linspace(tstart,tend,M+1)
 
     [T,X] = np.meshgrid(tt, xx)
@@ -77,20 +82,22 @@ def LaxWenInt(g, a, tstart, tend, M, N):
     uold = g(xInterior)
 
     amu = a*(dt/dx)
+    print(amu)
     
-    l2norm = np.zeros((M+1, 1))
-    l2norm[0] = lin.norm(g(xInterior))
-    print(l2norm[0])
     
     for c in range (M):
 
         unew =LaxWen(uold, amu)
         solution[:,c+1] = unew
-        l2norm[c+1] = lin.norm(unew)
         uold = unew
 
-    solution = np.vstack((solution, solution[0,:]))
+    #solution = np.vstack((solution, solution[0,:]))
 
+    l2norm = np.zeros((M+1))
+    for i in range (M+1):
+        l2norm[i]= math.sqrt(dx)*lin.norm(solution[:,i])
+
+    
     return solution, X, T, l2norm
 
 def convdif(uold, a, d, dt, dx):
@@ -134,41 +141,47 @@ def convdifInt(g, a, d, tstart, tend, M, N):
 
     return solution, X, T
 
-def LW(uold, N, dx, dt, Tdx):
-    Sdx = (np.diag(np.full(N,0))+np.diag((-1)*np.ones(N-1),1)+np.diag(np.ones(N-1),-1))/(2*dx)
-    #unew = uold - dt*np.matmul(uold, Sdx) + ((dt**2)/2)*(2*np.matmul(uold, np.matmul(Sdx, Sdx)) + np.matmul(np.square(uold), Tdx))
-    unew = uold - dt*np.matmul(uold, Sdx) + ((dt**2)/2)*(2*np.matmul(uold, np.square(Sdx)) + np.matmul(np.square(uold), Tdx))
+def LW(u, dt):
+    N = u.size
+    dx = 1/(N+1)
+    unew = np.zeros(N)
+    for i in range(N):
+        ux = (u[i-1] - u[(i+1) % N]) / (2*dx)
+        uxx = (u[i-1] - 2*u[i] + u[(i+1) % N]) / dx**2
+        unew[i] = u[i] - dt*u[i]*ux + dt**2/2*(2 * u[i] * ux**2 + u[i]**2 * uxx)
     return unew
-
-def TRLW(uold, N, dx, dt, d):
-    Tdx = (np.diag(np.full(N,-2))+np.diag(np.ones(N-1),1)+np.diag(np.ones(N-1),-1))/(dx**2)
-    unew = np.matmul(lin.inv(np.eye(N)-(d*dt/2)*Tdx),(LW(uold, N, dx, dt, Tdx) + (d*dt/2)*np.matmul(Tdx, uold)))
     
-    return unew
+
+def TRLW(Tdx, uold, dt, d):
+    T = d * dt/2 * Tdx
+    I = np.identity(uold.size)
+    return lin.solve(I - T, LW(uold, dt) + T @ uold)
+
+    
 
 def LWInt(g, d, tstart, tend, M, N):
 
-    dx =1/N
-    xx = np.linspace(0, 1, N+1)
-    xInterior = xx[:-1]
+    N = 250
+    M = 1000
+    d = 0.01
+    tend = 1
+    dt = tend/(M+1)
+    dx = 1 / N
+    xgrid = np.linspace(0, 1, N) 
 
-    dt = (tend-tstart)/M
-    tt = np.linspace(tstart,tend,M+1)
+    xx = np.linspace(0, 1, N)
+    tt = np.linspace(0, tend, M + 1)
+    T, X = np.meshgrid(tt, xx)
 
-    [T,X] = np.meshgrid(tt, xx)
+    Tdx = diags([1, -2, 1], [-1, 0, 1], shape=(N, N)).toarray()
+    Tdx[0][-1] = 1
+    Tdx[-1][0] = 1
 
-    solution = np.zeros((N,M+1))
-    solution[:,0] = g(xInterior)
-    uold = g(xInterior)
-    
-    for c in range (M):
+    U = np.zeros((M+1, N))
+    u = g(xgrid)
+    for i in range(M + 1):
+        U[i] = u
+        u = TRLW(1/dx**2 * Tdx, u, dt, d)
+        print(i)
 
-        unew =TRLW(uold, N, dx, dt, d)
-        solution[:,c+1] = unew
-        uold = unew
-
-    solution = np.vstack((solution, solution[0,:]))
-
-    return solution, X, T
-    
-
+    return U, X, T
